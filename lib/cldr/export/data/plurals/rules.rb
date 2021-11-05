@@ -60,7 +60,7 @@ module Cldr
               code = scrub_code(code)
 
               code = code.split('@').first.to_s
-              operand = /(n|i|f|t|v|w)/i
+              operand = /(c|e|n|i|f|t|v|w)/i
               expr = /#{operand}(?:\s+(?:mod|%)\s+([\d]+))?/i
               range = /(?:\d+\.\.\d+|\d+)/i
               range_list = /(#{range}(?:\s*,\s*#{range})*)/i
@@ -145,6 +145,12 @@ module Cldr
               enclose = false
               fraction = false
               case @type
+              when 'c', 'e'
+                # We don't support numbers in the "compact decimal" format.
+                # Since `c`/`e` are always 0 for non-"compact decimal" format
+                # numbers, we just hardcode it to 0 for now.
+                op = "#{@type} = 0"
+                enclose = true
               when 'i'
                 op = 'n.to_i'
               when 'f'
